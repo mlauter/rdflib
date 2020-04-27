@@ -131,14 +131,15 @@ def csv_reader(csv_data, dialect=csv.excel, **kwargs):
                             dialect=dialect, **kwargs)
     for row in csv_reader:
         # decode UTF-8 back to Unicode, cell by cell:
-        yield [text_type(cell, 'utf-8', errors='replace') for cell in row]
+        yield [cell.encode().decode('utf-8', errors='replace') for cell in row]
+
 
 
 def prefixuri(x, prefix, class_=None):
     if prefix:
         r = rdflib.URIRef(
             prefix + quote(
-                x.encode("utf8").replace(" ", "_"), safe=""))
+                x.replace(" ", "_").encode('utf-8'), safe=""))
     else:
         r = rdflib.URIRef(x)
     uris[x] = (r, class_)
@@ -352,7 +353,7 @@ class CSV2RDF(object):
             next(csvreader)
 
         # read header line
-        header_labels = list(csvreader.next())
+        header_labels = list(next(csvreader))
         headers = dict(
             enumerate([self.PROPBASE[toProperty(x)] for x in header_labels]))
         # override header properties if some are given
@@ -381,8 +382,8 @@ class CSV2RDF(object):
                 if self.IDENT == 'auto':
                     uri = self.BASE["%d" % rows]
                 else:
-                    uri = self.BASE["_".join([quote(x.encode(
-                        "utf8").replace(" ", "_"), safe="")
+                    uri = self.BASE["_".join([quote(x.replace(
+                        " ", "_").encode("utf8"), safe="")
                         for x in index(l, self.IDENT)])]
 
                 if self.LABEL:
