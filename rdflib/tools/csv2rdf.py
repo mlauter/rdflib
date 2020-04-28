@@ -168,7 +168,7 @@ class NodeUri(NodeMaker):
         return prefixuri(x, self.prefix, self.class_)
 
     def range(self):
-        return self.class_ or rdflib.RDF.Resource
+        return self.class_ or rdflib.RDFS.Resource
 
 
 class NodeLiteral(NodeMaker):
